@@ -10,18 +10,6 @@ namespace _2048_vgtu
         private static int tableWidth = 110;
         private static List<string> stringList = new List<string>();
 
-        public void PrintArray<T>(T[] array, string word)
-        {
-            PrintColumns(array.GetLength(0) - 1, word);
-            for (int i = 0; i < array.GetLength(0); i++)
-            {
-                stringList.Add(array[i] + " ");
-            }
-            PrintRow(stringList.ToArray());
-            stringList.Clear();
-            PrintLine();
-            Console.ReadLine();
-        }
         public void PrintTable(int[,] array)
         {
             PrintColumns(array.GetLength(1) + 1, " ");
@@ -32,7 +20,7 @@ namespace _2048_vgtu
                 {
                     if (array[rows, columns] == 0)
                     {
-                        stringList.Add("null");
+                        stringList.Add("   ");
                     }
                     else
                     {
@@ -47,8 +35,7 @@ namespace _2048_vgtu
                     PrintLine();
                 }
             }
-            PrintColumns(array.GetLength(1) + 1, " ");
-            //Console.ReadLine();
+            PrintColumns(array.GetLength(1) + 1, " ");;
         }
 
         public void PrintColumns(int maxColumns, string word)
@@ -77,6 +64,7 @@ namespace _2048_vgtu
             {
                 row += AlignCentre(column, width) + "|";
             }
+
 
             Console.WriteLine(row);
         }

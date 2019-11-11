@@ -2,7 +2,7 @@
 
 namespace _2048_vgtu
 {
-    class Program
+    public class Program
     {
         static void Main()
         {
@@ -15,29 +15,54 @@ namespace _2048_vgtu
             // draw grid
             drawing.PrintTable(gridService.mainGrid);
 
-
             ConsoleKey key;
             do
             {
                 key = Console.ReadKey(true).Key;
+
                 if (key == ConsoleKey.D)
                 {
                     Console.Clear();
-                    
-                    gridService.AddNumbersRight();
-
-                    gridService.AddNewNumberToGrid(gridService.mainGrid);
-
+                    var changes = !gridService.AddNumbersRight();
+                    if (changes == true)
+                    {
+                        gridService.AddNewNumberToGrid();
+                    }
                     drawing.PrintTable(gridService.mainGrid);
                 }
+
                 else if (key == ConsoleKey.A)
                 {
+
                     Console.Clear();
+                    var changes = !gridService.AddNumbersLeft();
+                    if (changes == true)
+                    {
+                        gridService.AddNewNumberToGrid();
+                    }
+                    drawing.PrintTable(gridService.mainGrid);
 
-                    gridService.AddNumbersLeft();
+                }
 
-                    gridService.AddNewNumberToGrid(gridService.mainGrid);
+                else if (key == ConsoleKey.S)
+                {
+                    Console.Clear();
+                    var changes = !gridService.AddNumbersDown();
+                    if (changes == true)
+                    {
+                        gridService.AddNewNumberToGrid();
+                    }
+                    drawing.PrintTable(gridService.mainGrid);
+                }
 
+                else if (key == ConsoleKey.W)
+                {
+                    Console.Clear();
+                    var changes = !gridService.AddNumbersUp();
+                    if (changes == true)
+                    {
+                        gridService.AddNewNumberToGrid();
+                    }
                     drawing.PrintTable(gridService.mainGrid);
                 }
 
