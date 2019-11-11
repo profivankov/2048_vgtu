@@ -20,6 +20,18 @@ namespace _2048_vgtu
             {
                 key = Console.ReadKey(true).Key;
 
+                if (gridService.CheckIfGridIsFull() == true)
+                {
+                    Console.WriteLine("Game over!");
+                    break;
+                }
+
+                if (gridService.CheckFor2048() == true)
+                {
+                    Console.WriteLine("You win!");
+                    break;
+                }
+
                 if (key == ConsoleKey.D)
                 {
                     Console.Clear();

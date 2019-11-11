@@ -17,25 +17,50 @@ namespace _2048_vgtu
 
         public void SetNewGrid()
         {
-            //mainGrid[0, 0] = 4;
-            //mainGrid[1, 0] = 4;
-            //mainGrid[2, 0] = 4;
-            //mainGrid[3, 0] = 4;
-
-            //mainGrid[0, 0] = 2;
-            //mainGrid[0, 1] = 2;
-            //mainGrid[0, 2] = 4;
-            //mainGrid[0, 3] = 2;
             for (int i = 0; i < 2; i++)
             {
                 mainGrid[random.Next(0, 4), random.Next(0, 4)] = 2;
             }
         }
 
+        public bool CheckFor2048()
+        {
+            for (int i = 0; i < mainGrid.GetLength(0); i++)
+            {
+                for (int j = 0; j < mainGrid.GetLength(1); j++)
+                {
+                    if (mainGrid[i, j] == 2048)
+                    {
+                        return true;
+                    }
+
+                }
+            }
+
+            return false;
+        }
+
+        public bool CheckIfGridIsFull()
+        {
+            for (int i = 0; i < mainGrid.GetLength(0); i++)
+            {
+                for (int j = 0; j < mainGrid.GetLength(1); j++)
+                {
+                    if (mainGrid[i,j] == 0)
+                    {
+                        return false;
+                    }
+                    
+                }
+            }
+
+            return true;
+        }
+
         public void AddNewNumberToGrid()
         {
-            var counter = 0;
-            while (counter != 1)
+            bool hasBeenAdded = false;
+            while (hasBeenAdded == false)
             {
                 var row = random.Next(0, 4);
                 var column = random.Next(0, 4);
@@ -43,17 +68,18 @@ namespace _2048_vgtu
                 if (mainGrid[row, column] == 0)
                 {
                     mainGrid[row, column] = 2;
-                    counter++;
+                    hasBeenAdded = true;
                 }
             }
+
         }
+
         public bool AddNumbersUp()
         {
             var tempGrid = (int[,])mainGrid.Clone();
 
             for (int col = 0; col < 4; col++)
             {
-
                 var collision = 0;
                 for (int mainRow = 0; mainRow < 4; mainRow++)
                 {
@@ -63,9 +89,6 @@ namespace _2048_vgtu
                         {
                             if ((mainGrid[rows, col] == mainGrid[mainRow, col]) && (IsPathClearVertically(mainRow, rows, col) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
                             {
-                                //mainGrid[mainRow, col] = mainGrid[rows, col] * 2;
-                                //mainGrid[rows, col] = 0;
-                                //collision++;
 
                                 if (collision == 0)
                                 {
@@ -104,7 +127,6 @@ namespace _2048_vgtu
 
             for (int col = 0; col < 4; col++)
             {
-                //int col = 1;
                 var collision = 0;
                 for (int mainRow = 3; mainRow >= 0; mainRow--)
                 {
@@ -114,10 +136,6 @@ namespace _2048_vgtu
                         {
                             if ((mainGrid[rows, col] == mainGrid[mainRow, col]) && (IsPathClearVertically(rows, mainRow, col) == true) && collision <= 2) //and if values are equal AND path between them clear, add them up
                             {
-                                //mainGrid[mainRow, col] = mainGrid[rows, col] * 2;
-                                //mainGrid[rows, col] = 0;
-                                //collision++;
-
 
                                 if (collision == 0)
                                 {
@@ -153,10 +171,10 @@ namespace _2048_vgtu
         public bool AddNumbersRight()
         {
             var tempGrid = (int[,])mainGrid.Clone();
-            var collision = 0;
+
             for (int rows = 0; rows < 4; rows++)
             {
-                
+                var collision = 0;
                 for (int mainCol = 3; mainCol >= 0; mainCol--)
                 {
                     for (int col = mainCol; col >= 0; col--) //iterate through FIRST row
@@ -171,13 +189,13 @@ namespace _2048_vgtu
                                     mainGrid[rows, col] = 0;
                                     collision++;
                                 }
-                                else if (collision == 1 && mainGrid[rows,col] == tempGrid[rows,mainCol])
+                                else if (collision == 1 && mainGrid[rows, col] == tempGrid[rows, mainCol])
                                 {
                                     mainGrid[rows, mainCol] = mainGrid[rows, col] * 2;
                                     mainGrid[rows, col] = 0;
                                     collision++;
                                 }
-                                
+
                             }
                             else   //if not equal check for free space AND move them to side
                             {
@@ -294,13 +312,14 @@ namespace _2048_vgtu
 
             return firstPos;
         }
+
         public bool IsPathClearHorizontally(int firstPos, int lastPos, int rows)
         {
             if (firstPos == lastPos)
             {
                 return false;
             }
-            for (int col = firstPos + 1 ; col < lastPos; col++)
+            for (int col = firstPos + 1; col < lastPos; col++)
             {
                 if (mainGrid[rows, col] != 0)
                 {
