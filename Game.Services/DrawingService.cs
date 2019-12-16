@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Game.Contracts;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace _2048_vgtu
+namespace Game.Services
 {
-    public class DrawingService
+    public class DrawingService : IDrawingService
     {
-
         private static int tableWidth = 110;
         private static List<string> stringList = new List<string>();
 

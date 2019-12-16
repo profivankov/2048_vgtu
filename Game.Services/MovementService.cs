@@ -1,80 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Game.Contracts;
 
-namespace _2048_vgtu
+namespace Game.Services
 {
-    public class GridService
+    public class MovementService : IMovementService
     {
-        private static Random random;
-        public int[,] mainGrid { get; set; }
-        public GridService()
+        public IScoutingService scoutingService;
+
+        public MovementService(IScoutingService _scoutingService)
         {
-            mainGrid = new int[4, 4];
-            random = new Random();
+            scoutingService = _scoutingService;
         }
-
-        public void SetNewGrid()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                mainGrid[random.Next(0, 4), random.Next(0, 4)] = 2;
-            }
-        }
-
-        public bool CheckFor2048()
-        {
-            for (int i = 0; i < mainGrid.GetLength(0); i++)
-            {
-                for (int j = 0; j < mainGrid.GetLength(1); j++)
-                {
-                    if (mainGrid[i, j] == 2048)
-                    {
-                        return true;
-                    }
-
-                }
-            }
-
-            return false;
-        }
-
-        public bool CheckIfGridIsFull()
-        {
-            for (int i = 0; i < mainGrid.GetLength(0); i++)
-            {
-                for (int j = 0; j < mainGrid.GetLength(1); j++)
-                {
-                    if (mainGrid[i,j] == 0)
-                    {
-                        return false;
-                    }
-                    
-                }
-            }
-
-            return true;
-        }
-
-        public void AddNewNumberToGrid()
-        {
-            bool hasBeenAdded = false;
-            while (hasBeenAdded == false)
-            {
-                var row = random.Next(0, 4);
-                var column = random.Next(0, 4);
-
-                if (mainGrid[row, column] == 0)
-                {
-                    mainGrid[row, column] = 2;
-                    hasBeenAdded = true;
-                }
-            }
-
-        }
-
-        public bool AddNumbersUp()
+        public bool AddNumbersUp(int[,] mainGrid)
         {
             var tempGrid = (int[,])mainGrid.Clone();
 
@@ -87,7 +23,7 @@ namespace _2048_vgtu
                     {
                         if (mainGrid[rows, col] != 0)  //if window not empty
                         {
-                            if ((mainGrid[rows, col] == mainGrid[mainRow, col]) && (IsPathClearVertically(mainRow, rows, col) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
+                            if ((mainGrid[rows, col] == mainGrid[mainRow, col]) && (scoutingService.IsPathClearVertically(mainGrid, mainRow, rows, col) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
                             {
 
                                 if (collision == 0)
@@ -105,7 +41,7 @@ namespace _2048_vgtu
                             }
                             else   //if not equal check for free space AND move them to side
                             {
-                                var freeRowUp = CheckForSpaceUp(rows, mainRow, col);
+                                var freeRowUp = scoutingService.CheckForSpaceUp(mainGrid, rows, mainRow, col);
                                 if (freeRowUp != rows)
                                 {
                                     mainGrid[freeRowUp, col] = mainGrid[rows, col];
@@ -118,10 +54,10 @@ namespace _2048_vgtu
                 }
             }
 
-            return CheckIfArraysEqual(tempGrid);
+            return scoutingService.CheckIfArraysEqual(mainGrid, tempGrid);
         }
 
-        public bool AddNumbersDown()
+        public bool AddNumbersDown(int[,] mainGrid)
         {
             var tempGrid = (int[,])mainGrid.Clone();
 
@@ -134,7 +70,7 @@ namespace _2048_vgtu
                     {
                         if (mainGrid[rows, col] != 0)  //if window not empty
                         {
-                            if ((mainGrid[rows, col] == mainGrid[mainRow, col]) && (IsPathClearVertically(rows, mainRow, col) == true) && collision <= 2) //and if values are equal AND path between them clear, add them up
+                            if ((mainGrid[rows, col] == mainGrid[mainRow, col]) && (scoutingService.IsPathClearVertically(mainGrid, rows, mainRow, col) == true) && collision <= 2) //and if values are equal AND path between them clear, add them up
                             {
 
                                 if (collision == 0)
@@ -152,7 +88,7 @@ namespace _2048_vgtu
                             }
                             else   //if not equal check for free space AND move them to side
                             {
-                                var freeRowDown = CheckForSpaceDown(rows, mainRow, col);
+                                var freeRowDown = scoutingService.CheckForSpaceDown(mainGrid, rows, mainRow, col);
                                 if (freeRowDown != rows)
                                 {
                                     mainGrid[freeRowDown, col] = mainGrid[rows, col];
@@ -165,10 +101,10 @@ namespace _2048_vgtu
                 }
             }
 
-            return CheckIfArraysEqual(tempGrid);
+            return scoutingService.CheckIfArraysEqual(mainGrid, tempGrid);
         }
 
-        public bool AddNumbersRight()
+        public bool AddNumbersRight(int[,] mainGrid)
         {
             var tempGrid = (int[,])mainGrid.Clone();
 
@@ -181,7 +117,7 @@ namespace _2048_vgtu
                     {
                         if (mainGrid[rows, col] != 0)  //if window not empty
                         {
-                            if ((mainGrid[rows, col] == mainGrid[rows, mainCol]) && (IsPathClearHorizontally(col, mainCol, rows) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
+                            if ((mainGrid[rows, col] == mainGrid[rows, mainCol]) && (scoutingService.IsPathClearHorizontally(mainGrid, col, mainCol, rows) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
                             {
                                 if (collision == 0)
                                 {
@@ -199,7 +135,7 @@ namespace _2048_vgtu
                             }
                             else   //if not equal check for free space AND move them to side
                             {
-                                var freeColRight = CheckForSpaceRight(col, mainCol, rows);
+                                var freeColRight = scoutingService.CheckForSpaceRight(mainGrid, col, mainCol, rows);
                                 if (freeColRight != col)
                                 {
                                     mainGrid[rows, freeColRight] = mainGrid[rows, col];
@@ -212,10 +148,10 @@ namespace _2048_vgtu
                 }
             }
 
-            return CheckIfArraysEqual(tempGrid);
+            return scoutingService.CheckIfArraysEqual(mainGrid, tempGrid);
         }
 
-        public bool AddNumbersLeft()
+        public bool AddNumbersLeft(int[,] mainGrid)
         {
             var tempGrid = (int[,])mainGrid.Clone();
 
@@ -228,7 +164,7 @@ namespace _2048_vgtu
                     {
                         if (mainGrid[rows, col] != 0)
                         {
-                            if ((mainGrid[rows, col] == mainGrid[rows, mainCol]) && (IsPathClearHorizontally(mainCol, col, rows) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
+                            if ((mainGrid[rows, col] == mainGrid[rows, mainCol]) && (scoutingService.IsPathClearHorizontally(mainGrid, mainCol, col, rows) == true) && collision < 2) //and if values are equal AND path between them clear, add them up
                             {
                                 if (collision == 0)
                                 {
@@ -245,7 +181,7 @@ namespace _2048_vgtu
                             }
                             else
                             {
-                                var freeColLeft = CheckForSpaceLeft(col, mainCol, rows);
+                                var freeColLeft = scoutingService.CheckForSpaceLeft(mainGrid, col, mainCol, rows);
                                 if (freeColLeft != col)
                                 {
                                     mainGrid[rows, freeColLeft] = mainGrid[rows, col];
@@ -258,104 +194,7 @@ namespace _2048_vgtu
                 }
             }
 
-            return CheckIfArraysEqual(tempGrid);
+            return scoutingService.CheckIfArraysEqual(mainGrid, tempGrid);
         }
-
-        public int CheckForSpaceUp(int firstPos, int lastPos, int col)
-        {
-            for (int rows = lastPos; rows <= firstPos; rows++)
-            {
-                if (mainGrid[rows, col] == 0)
-                {
-                    return rows;
-                }
-            }
-
-            return firstPos;
-        }
-
-        public int CheckForSpaceDown(int firstPos, int lastPos, int col)
-        {
-            for (int rows = lastPos; rows >= firstPos; rows--)
-            {
-                if (mainGrid[rows, col] == 0)
-                {
-                    return rows;
-                }
-            }
-
-            return firstPos;
-        }
-
-        public int CheckForSpaceLeft(int firstPos, int lastPos, int rows)
-        {
-            for (int col = lastPos; col <= firstPos; col++)
-            {
-                if (mainGrid[rows, col] == 0)
-                {
-                    return col;
-                }
-            }
-
-            return firstPos;
-        }
-
-        public int CheckForSpaceRight(int firstPos, int lastPos, int rows)
-        {
-            for (int col = lastPos; col >= firstPos; col--)
-            {
-                if (mainGrid[rows, col] == 0)
-                {
-                    return col;
-                }
-            }
-
-            return firstPos;
-        }
-
-        public bool IsPathClearHorizontally(int firstPos, int lastPos, int rows)
-        {
-            if (firstPos == lastPos)
-            {
-                return false;
-            }
-            for (int col = firstPos + 1; col < lastPos; col++)
-            {
-                if (mainGrid[rows, col] != 0)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool IsPathClearVertically(int firstPos, int lastPos, int cols)
-        {
-            if (firstPos == lastPos)
-            {
-                return false;
-            }
-            for (int row = firstPos + 1; row < lastPos; row++)
-            {
-                if (mainGrid[row, cols] != 0)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool CheckIfArraysEqual(int[,] tempGrid)
-        {
-            var equal =
-                tempGrid.Rank == mainGrid.Rank &&
-                Enumerable.Range(0, tempGrid.Rank).All(dimension => tempGrid.GetLength(dimension) == mainGrid.GetLength(dimension)) &&
-                tempGrid.Cast<int>().SequenceEqual(mainGrid.Cast<int>());
-
-            return equal;
-        }
-
     }
 }
